@@ -44,6 +44,7 @@ services:
   pf:
     container_name: ${CONTAINER_NAME}
     hostname: "pathfinder"
+    image: tupsi/pathfinder:1.00
     build: '.'
     env_file: .env
     labels:
