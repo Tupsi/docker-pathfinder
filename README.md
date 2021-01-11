@@ -1,4 +1,4 @@
-# docker-pathfinder
+### docker-pathfinder
 
 **docker-pathfinder** is a docker-compose setup that contains a hassle free out of the box setup for [Pathfinder](https://developers.eveonline.com/https://github.com/exodus4d/pathfinder).
 
@@ -42,27 +42,43 @@ CCP_SSO_CLIENT_ID=""
 CCP_SSO_SECRET_KEY=""
 CCP_ESI_SCOPES="esi-location.read_online.v1,esi-location.read_location.v1,esi-location.read_ship_type.v1,esi-ui.write_waypoint.v1,esi-ui.open_window.v1,esi-universe.read_structures.v1,esi-corporations.read_corporation_membership.v1,esi-clones.read_clones.v1"
 ```
-4. **Optional: Check Traefik labels**
+4. **(Optional) Check Traefik labels. **
 If you are using traefik, check entrypoints (http, https), docker.network (proxy) and certresolver (http) with your setup.
 
-5. **Build and Run it**
+5. **(Optional) Finetune redis, nginx, php. **
+The config files used in the build process are located in the /static folder. So if you wanna tweak something, do it in there before you go to the next step, as these get pulled into the image and if you change it later, you have todo another build run.
+
+6. **Build and Run it**
 ```shell                                                                                        
 docker-compose build && docker-compose up -d
 ```
 
-6. **Open the https://< your-domain >/setup page. Your username  and password from .env. Click on create database for eve_universe and pathfinder. And click on setup tables && fix column/keys for both databases.**
+7. **Create Datebases. **
+Open the https://< your-domain >/setup page. Your username  and password from .env. Click on create database for eve_universe and pathfinder. And click on setup tables && fix column/keys for both databases.
 
-7. **Import Eve-Universe Database**
+8. **Import Eve-Universe Database**
 ```shell                                                                                        
 ./installEveUniverseDB.sh
 ```
-8. **Optional: If you want to finetune settings**
+9. **(Optional) If you want to finetune settings**
 ```shell                                                                                        
 ./getConfigs.sh
 ```
 You can now change/add settings inside /conf and these will override what is in /app.
 
-9. **That's it!**
+10. **That's it! Enjoy your Pathfinder docker stack!**
+
+### Tweaking
+
+If you want to change settings inside the image at a later point in time, simply edit the files in /static and run
+```shell                                                                                        
+docker-compose build --no-cache && docker-compose up -d
+```
+afterwards.
+I exposed the /backup path as volume, so I can backup my sql dump from inside. If you want to do that as well, run the following outside prior to your backup run.
+```shell                                                                                        
+docker exec pf-db sh -c "mysqldump -u root -p<your db password from .env> --add-drop-database --databases pf >/backup/pathfinder.sql"
+```                                                                                     
 
 ### Acknowledgments
 *  [exodus4d](https://github.com/exodus4d/) for pathfinder
