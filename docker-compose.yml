@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+  pfdb:
+    image: bianjp/mariadb-alpine:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
+    container_name: "$CONTAINER_NAME-db"
+    networks:
+      default:
+        aliases:
+          - "${CONTAINER_NAME}db"
+    volumes:
+     - $path/database:/var/lib/mysql
+     - $path/static/pathfinder/export/sql/eve_universe.sql.zip:/eve_universe.sql.zip
+    restart: always
+  pf-redis:
+    image: redis:latest
+    container_name: "$CONTAINER_NAME-redis"
+    command: redis-server /etc/redis.conf
+    hostname: redis
+    volumes:
+      - redis_data:/data
+      - ${path}/static/redis.conf:/etc/redis.conf
+    networks:
+      default:
+        aliases:
+          - "$CONTAINER_NAME-redis"
+    logging:
+      driver: none
+    restart: always
+  pf-socket:
+    image: composer:latest
+    container_name: "$CONTAINER_NAME-socket"
+    command: ["sh","-c","composer install && php cmd.php --tcpHost 0.0.0.0"]
+    hostname: socket
+    volumes:
+      - ${path}/static/websocket:/app
+    networks:
+      default:
+        aliases:
+          - "$CONTAINER_NAME-socket"
+    restart: always
+  pf:
+    container_name: ${CONTAINER_NAME}
+    hostname: "pathfinder"
+    build: '.'
+    env_file: .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.${CONTAINER_NAME}-redirect.redirectscheme.scheme=https"
+      - "traefik.http.services.${CONTAINER_NAME}.loadbalancer.server.port=80"
+      - "traefik.http.routers.${CONTAINER_NAME}443.tls=true"
+      - "traefik.http.routers.${CONTAINER_NAME}443.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${CONTAINER_NAME}443.entrypoints=https"
+      - "traefik.http.routers.${CONTAINER_NAME}443.tls.certresolver=http"
+      - "traefik.http.routers.${CONTAINER_NAME}80.entrypoints=http"
+      - "traefik.http.routers.${CONTAINER_NAME}80.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${CONTAINER_NAME}80.middlewares=${CONTAINER_NAME}-redirect"
+      - "traefik.docker.network=proxy"
+
+    networks:
+      - default
+      - proxy
+    healthcheck:
+      disable: true
+    volumes:
+      - ${path}/conf:/var/www/pathfinder/conf
+      - ${path}/logs:/var/www/pathfinder/logs
+      - ${path}/history:/var/www/pathfinder/history
+    depends_on:
+      - pfdb   
+      - pf-redis
+      - pf-socket
+    restart: always
+
+volumes:
+     redis_data:
+networks:
+    default:
+    proxy:
+       external: true
+

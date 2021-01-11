@@ -1,0 +1,2 @@
+* * * * * cd /var/www/pathfinder;sudo -u www-data php index.php /cron >/dev/null 2>&1
+
