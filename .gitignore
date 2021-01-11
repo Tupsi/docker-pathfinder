@@ -1,2 +1,8 @@
 /static/pathfinder/
 /static/websocket/
+/conf/
+/backup/
+/database/
+/history/
+/logs/
+.env
