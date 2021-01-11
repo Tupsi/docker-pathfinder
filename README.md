@@ -1,6 +1,6 @@
 ### docker-pathfinder
 
-**docker-pathfinder** is a docker-compose setup that contains a hassle free out of the box setup for [Pathfinder](https://developers.eveonline.com/https://github.com/exodus4d/pathfinder).
+**docker-pathfinder** is a docker-compose setup that contains a hassle free out of the box setup for [Pathfinder](https://github.com/exodus4d/pathfinder), a wormhole mapping tool for Eve-Online.
 
 **Features**
 * Setup Scripts for most initial stuff
