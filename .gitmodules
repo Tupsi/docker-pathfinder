@@ -1,6 +1,6 @@
-[submodule "pathfinder"]
+[submodule "static/pathfinder"]
 	path = static/pathfinder
 	url = https://github.com/exodus4d/pathfinder
-[submodule "websocket"]
+[submodule "static/websocket"]
 	path = static/websocket
 	url = https://github.com/exodus4d/pathfinder_websocket
