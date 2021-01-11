@@ -6,7 +6,9 @@
 * Setup Scripts for most initial stuff
 * Password Protection of the setup page
 * Socket Server running out of the box
-* Redis for caching included
+* Redis 6.0.9
+* php 7.4
+* nginx 1.18
 * Automatic Restart in-case of crash
 * Traefik labels for easy Reverse-Proxy usage out of the box
 
