@@ -12,7 +12,8 @@ services:
           - "${CONTAINER_NAME}db"
     volumes:
      - $path/database:/var/lib/mysql
-     - $path/static/pathfinder/export/sql/eve_universe.sql.zip:/eve_universe.sql.zip
+     - $path/static/pathfinder/export/sql:/export
+#     - $path/static/pathfinder/export/sql/eve_universe.sql.zip:/eve_universe.sql.zip
     restart: always
   pf-redis:
     image: redis:latest
@@ -44,13 +45,19 @@ services:
   pf:
     container_name: ${CONTAINER_NAME}
     hostname: "pathfinder"
-    image: tupsi/pathfinder:1.00
-    build: '.'
+    image: tupsi/pathfinder:1.01-beta1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        pf_version: $PF_VERSION
+        domain: $DOMAIN
     env_file: .env
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.${CONTAINER_NAME}-redirect.redirectscheme.scheme=https"
-      - "traefik.http.services.${CONTAINER_NAME}.loadbalancer.server.port=80"
+      - "traefik.http.services.${CONTAINER_NAME}.loadbalancer.server.scheme=https"
+      - "traefik.http.services.${CONTAINER_NAME}.loadbalancer.server.port=443"
       - "traefik.http.routers.${CONTAINER_NAME}443.tls=true"
       - "traefik.http.routers.${CONTAINER_NAME}443.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${CONTAINER_NAME}443.entrypoints=https"
@@ -66,6 +73,7 @@ services:
     healthcheck:
       disable: true
     volumes:
+#      - ${path}/static/pathfinder:/var/www/pathfinder
       - ${path}/conf:/var/www/pathfinder/conf
       - ${path}/logs:/var/www/pathfinder/logs
       - ${path}/history:/var/www/pathfinder/history
