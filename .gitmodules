@@ -3,4 +3,4 @@
 	url = https://github.com/exodus4d/pathfinder_websocket
 [submodule "static/pathfinder"]
 	path = static/pathfinder
-	url = https://github.com/Tupsi/pathfinder.git
+	url = git@github.com:Tupsi/pathfinder.git
