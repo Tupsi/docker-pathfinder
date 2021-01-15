@@ -4,7 +4,7 @@
 #FROM debian:bullseye-slim
 FROM debian:bullseye-20201209-slim
 
-ARG pf_version="v2.0.1-tupsi"
+ARG pf_version="v2.0.3-tupsi"
 #ENV PF_VERSION2=$pf_version
 
 # Install basic stuff we need later on
@@ -40,24 +40,23 @@ COPY static/templateEnvironment.ini /templates/templateEnvironment.ini
 COPY static/templateConfig.ini /templates/templateConfig.ini
 COPY static/templatePathfinder.ini /templates/templatePathfinder.ini
 
-ARG domain="pftest"
+ARG domain="test"
 RUN mkdir /certs && openssl dhparam -out /certs/dhparam.pem 2048 && openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
     -keyout /certs/self.key -out /certs/self.crt \
     -subj "/C=DE/ST=Somewhere/L=Some/O=Security/OU=IT/CN=$domain"
 # copy Pathfinder into build
-COPY static/pathfinder /var/www/pathfinder
-WORKDIR /var/www/pathfinder
-RUN mkdir -p /var/www/pathfinder/tmp/cache && chown -R www-data . && chmod -R 0766 logs tmp && touch /etc/nginx/.setup_pass &&  chmod +x /entrypoint.sh
-
+#COPY static/pathfinder /var/www/pathfinder
+#WORKDIR /var/www/pathfinder
+#RUN mkdir -p /var/www/pathfinder/tmp/cache && chown -R www-data . && chmod -R 0766 logs tmp && touch /etc/nginx/.setup_pass &&  chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 # Run composer install to install the dependencies
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --optimize-autoloader --no-interaction --no-progress
+#ENV COMPOSER_ALLOW_SUPERUSER=1
+#RUN composer install --optimize-autoloader --no-interaction --no-progress
 
 # if you ever need to redo /public change pf_version in .env and uncomment
 #RUN  npm install -g npm-check-updates && npm install && npm run gulp production -- --tag="$pf_version"
 
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1/fpm-ping
 EXPOSE 80
 CMD cron && service php7.4-fpm start && service nginx start && tail -f /dev/null
 ENTRYPOINT ["/entrypoint.sh"]
-HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1/fpm-ping
-

@@ -13,7 +13,6 @@ services:
     volumes:
      - $path/database:/var/lib/mysql
      - $path/static/pathfinder/export/sql:/export
-#     - $path/static/pathfinder/export/sql/eve_universe.sql.zip:/eve_universe.sql.zip
     restart: always
   pf-redis:
     image: redis:latest
@@ -45,7 +44,7 @@ services:
   pf:
     container_name: ${CONTAINER_NAME}
     hostname: "pathfinder"
-    image: tupsi/pathfinder:1.01-beta1
+    image: tupsi/pathfinder:1.03-rc1
     build:
       context: .
       dockerfile: Dockerfile
@@ -73,7 +72,7 @@ services:
     healthcheck:
       disable: true
     volumes:
-#      - ${path}/static/pathfinder:/var/www/pathfinder
+      - ${path}/static/pathfinder:/var/www/pathfinder
       - ${path}/conf:/var/www/pathfinder/conf
       - ${path}/logs:/var/www/pathfinder/logs
       - ${path}/history:/var/www/pathfinder/history

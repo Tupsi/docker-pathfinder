@@ -1,4 +1,4 @@
-### docker-pathfinder
+# docker-pathfinder
 
 **docker-pathfinder** is a docker-compose setup that contains a hassle free out of the box setup for [Pathfinder](https://github.com/exodus4d/pathfinder), a wormhole mapping tool for Eve-Online.
 
@@ -12,7 +12,7 @@
 * Automatic Restart in-case of crash
 * Traefik labels for easy Reverse-Proxy usage out of the box
 
-### How to run it
+## How to run it
 
 **Prerequisites**:
 * [docker](https://docs.docker.com/)
@@ -60,15 +60,10 @@ Open the https://< your-domain >/setup page. Your username  and password from .e
 ```shell                                                                                        
 ./installEveUniverseDB.sh
 ```
-9. **(Optional) If you want to finetune settings**
-```shell                                                                                        
-./getConfigs.sh
-```
-You can now change/add settings inside /conf and these will override what is in /app.
 
-10. **That's it! Enjoy your Pathfinder docker stack!**
+9. **That's it! Enjoy your Pathfinder docker stack!**
 
-### Tweaking
+## Tweaking
 
 If you want to change settings inside the image at a later point in time, simply edit the files in /static and run
 ```shell                                                                                        
@@ -77,17 +72,31 @@ docker-compose build --no-cache && docker-compose up -d
 afterwards.
 I exposed the /backup path as volume, so I can backup my sql dump from inside. If you want to do that as well, run the following outside prior to your backup run.
 ```shell                                                                                        
-docker exec pf-db sh -c "mysqldump -u root -p<your db password from .env> --add-drop-database --databases pf >/backup/pathfinder.sql"
+docker exec pf-db sh -c "mysqldump -u root -p<your db password from .env> \
+         --add-drop-database --databases pf >/backup/pathfinder.sql"
 ```                                                                                     
 
-### Acknowledgments
+### **If you want to finetune settings**
+```shell
+./getConfigs.sh
+```
+You can now change/add settings inside /conf and these will override what is in /app.
+
+### **Samples**
+```shell
+./getConfigAsSamples.sh
+```
+If you do not want to overwrite already made changes in your /config use this instead.
+
+
+## Acknowledgments
 *  [exodus4d](https://github.com/exodus4d/) for pathfinder
 *  techfreak for initial pointers from his [version](https://gitlab.com/techfreak/pathfinder-container)
 *  People from the Pathfinder Slack community for helping out
 
-### Authors
+## Authors
 * tupsi
 
-### License
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
